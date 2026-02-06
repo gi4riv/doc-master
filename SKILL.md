@@ -18,6 +18,9 @@ Build, update, and query a persistent local index of the current workspace (recu
 - Run `build_index.py` to scan the workspace and store outputs under `<root>/.codex/doc-master/`.
 - Use incremental processing based on mtime/size and content hash, reusing cached extraction results when possible.
 - Default OCR languages are `ita+eng`. Override with `--languages` or `DOC_INDEX_OCR_LANGS`.
+- PDF OCR uses a hybrid pipeline by default (`--pdf-ocr-engine auto`): native text first, then OCRmyPDF for scanned pages.
+- If OCRmyPDF/unpaper are missing and PDF OCR needs them, the script tries to auto-install once per run.
+- If auto-install fails, indexing continues with legacy OCR fallback (`PyMuPDF + pytesseract`).
 
 Flags:
 - `--root <path>`: workspace root (default: cwd)
@@ -26,6 +29,17 @@ Flags:
 - `--include-hidden`: include hidden files and folders
 - `--force-rebuild`: rebuild index even if no changes detected
 - `--embed-model <model-id>`: HuggingFace embedding model id
+- `--pdf-ocr-engine <auto|legacy|ocrmypdf>`: PDF OCR strategy
+- `--pdf-clean <none|safe|aggressive>`: cleanup mode for OCRmyPDF
+- `--pdf-unpaper-args <args>`: custom unpaper args forwarded by OCRmyPDF
+- `--no-auto-install-ocr-tools`: disable OCR tool auto-install
+
+Environment variables:
+- `DOC_INDEX_OCR_LANGS`: default OCR languages
+- `DOC_INDEX_PDF_OCR_ENGINE`: default PDF OCR engine (`auto`, `legacy`, `ocrmypdf`)
+- `DOC_INDEX_PDF_CLEAN`: default PDF cleanup mode (`none`, `safe`, `aggressive`)
+- `DOC_INDEX_PDF_UNPAPER_ARGS`: default unpaper args for OCRmyPDF
+- `DOC_INDEX_AUTO_INSTALL_OCR_TOOLS`: `1` (default) or `0`
 
 ## Query the index
 - Run `query_index.py` to retrieve relevant passages and citations.
@@ -44,6 +58,7 @@ The index is persisted under `<root>/.codex/doc-master/`:
 - `manifest.json` (state for incremental updates)
 - `logs/` (per-run file status logs)
 - `INDEX.md` (summary of last run)
+- `scratch/tmp/ocrmypdf/` (temporary OCRmyPDF working files)
 
 ## Workspace hygiene
 When creating ad-hoc tools or temporary artifacts for personal use, keep them inside the Doc Master area:
@@ -54,4 +69,9 @@ When creating ad-hoc tools or temporary artifacts for personal use, keep them in
 - Avoid creating these artifacts in the workspace root or alongside project sources.
 
 ## Dependencies
-Install Python deps from `scripts/requirements.txt`. OCR also requires the system `tesseract` binary.
+Install Python deps from `scripts/requirements.txt`.
+
+OCR dependencies:
+- Required baseline: system `tesseract` binary
+- Advanced PDF OCR: `ocrmypdf` and `unpaper` (auto-installed when missing, if supported)
+- Windows note: native auto-install for `unpaper` is not supported; the build falls back gracefully.

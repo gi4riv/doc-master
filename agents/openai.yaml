@@ -1,0 +1,7 @@
+interface:
+  display_name: "Doc Master"
+  short_description: "Local document indexing and search via LlamaIndex"
+  icon_small: "./assets/doc-master-icon-small.svg"
+  icon_large: "./assets/doc-master-icon-large.png"
+  brand_color: "#263eb5"
+  default_prompt: "Use $doc-master to index this workspace and answer questions about its files."

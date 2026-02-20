@@ -1,6 +1,6 @@
 ---
 name: doc-master
-description: Build and query a local, persistent LlamaIndex index for a workspace directory, including OCR for scanned PDFs and raster images. Use when asked to create/update an index, search the entire folder, make documents searchable, or build a knowledge base from a directory (including scanned PDFs and images).
+description: Build and query a local, persistent LlamaIndex index for a workspace directory, including OCR for scanned PDFs and raster images. Use when asked to create/update an index, search the entire folder, make documents searchable, search inside documents, or build a knowledge base from a directory (including scanned PDFs and images).
 ---
 
 # Doc Master
